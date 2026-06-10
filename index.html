@@ -273,8 +273,8 @@ Logout
 
 <div class="modal-content">
 
-<h2>Add User</h2>
-
+<h2 id="modalTitle">Add User</h2>
+<input type="hidden" id="userId">
 <input type="text" id="username" placeholder="Username">
 
 <input type="password" id="password" placeholder="Password">
@@ -295,7 +295,7 @@ Logout
 <option>Inactive</option>
 </select>
 
-<button class="save-btn" onclick="addUser()">
+<button class="save-btn" onclick="saveUser()">
 Save User
 </button>
 
@@ -332,8 +332,117 @@ window.location.href =
 "https://interfreight.github.io/login/";
 
 }
+function editUser(
+id,
+username,
+fullName,
+email,
+role,
+status
+){
 
+document.getElementById("modalTitle").innerHTML =
+"Edit User";
+
+document.getElementById("userId").value = id;
+
+document.getElementById("username").value = username;
+
+document.getElementById("fullname").value = fullName;
+
+document.getElementById("email").value = email;
+
+document.getElementById("role").value = role;
+
+document.getElementById("status").value = status;
+
+document.getElementById("password").value = "";
+
+document.getElementById("userModal").style.display = "block";
+
+}
+  async function saveUser(){
+
+const id =
+document.getElementById("userId").value;
+
+if(id){
+
+updateUser();
+
+}else{
+
+addUser();
+
+}
+
+}
+  async function updateUser(){
+
+const response = await fetch(SCRIPT_URL,{
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+action:"update",
+
+id:document.getElementById("userId").value,
+
+username:document.getElementById("username").value,
+
+password:document.getElementById("password").value,
+
+fullName:document.getElementById("fullname").value,
+
+email:document.getElementById("email").value,
+
+role:document.getElementById("role").value,
+
+status:document.getElementById("status").value
+
+})
+
+});
+
+const result = await response.json();
+
+if(result.success){
+
+alert("User updated successfully");
+
+closeModal();
+
+loadUsers();
+
+}else{
+
+alert("Update failed");
+
+}
+
+}
 function openModal(){
+
+document.getElementById("modalTitle").innerHTML =
+"Add User";
+
+document.getElementById("userId").value = "";
+
+document.getElementById("username").value = "";
+
+document.getElementById("password").value = "";
+
+document.getElementById("fullname").value = "";
+
+document.getElementById("email").value = "";
+
+document.getElementById("role").value = "User";
+
+document.getElementById("status").value = "Active";
 
 document.getElementById("userModal")
 .style.display="block";
@@ -342,11 +451,17 @@ document.getElementById("userModal")
 
 function closeModal(){
 
-document.getElementById("userModal")
-.style.display="none";
+document.getElementById("userModal").style.display="none";
+
+document.getElementById("userId").value="";
+document.getElementById("username").value="";
+document.getElementById("password").value="";
+document.getElementById("fullname").value="";
+document.getElementById("email").value="";
+document.getElementById("role").value="User";
+document.getElementById("status").value="Active";
 
 }
-
 async function loadUsers(){
 
 const response =
@@ -403,13 +518,25 @@ User
 <td>
 
 <button
+class="edit-btn"
+onclick="editUser(
+'${user.id}',
+'${user.username}',
+'${user.fullName}',
+'${user.email}',
+'${user.role}',
+'${user.status}'
+)">
+Edit
+</button>
+
+<button
 class="delete-btn"
 onclick="deleteUser('${user.id}')">
 Delete
 </button>
 
 </td>
-
 </tr>
 `;
 
@@ -485,6 +612,10 @@ await fetch(SCRIPT_URL,{
 
 method:"POST",
 
+headers:{
+"Content-Type":"application/json"
+},
+
 body:JSON.stringify({
 action:"delete",
 id:id
@@ -501,6 +632,10 @@ async function changeRole(id,role){
 await fetch(SCRIPT_URL,{
 
 method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
 
 body:JSON.stringify({
 action:"changeRole",
