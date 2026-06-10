@@ -138,7 +138,20 @@ cursor:pointer;
 
 </style>
 </head>
+<script>
+const user = JSON.parse(localStorage.getItem("currentUser"));
 
+// BLOCK IF NOT LOGGED IN
+if(!user){
+  window.location.href = "index.html";
+}
+
+// BLOCK IF NOT IT ROLE
+if(user.role !== "IT"){
+  alert("Access denied: IT only system");
+  window.location.href = "index.html";
+}
+</script>
 <body>
 
 <div class="sidebar">
@@ -240,7 +253,7 @@ function logout(){
 
 localStorage.removeItem("currentUser");
 
-window.location.href="index.html";
+window.location.href="https://interfreight.github.io/login/";
 
 }
 
