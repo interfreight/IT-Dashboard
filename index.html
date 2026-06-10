@@ -286,7 +286,15 @@ Logout
 <select id="role">
 <option>Administrator</option>
 <option>IT</option>
-<option>Manager</option>
+<option>HR</option>
+<option>ADMIN</option>
+<option>PRESIDENT</option>
+<option>BOD</option>
+<option>TRANSPORT MANAGER</option>
+<option>OPERATIONS MANAGER</option>
+<option>SALES MANAGER</option>
+<option>ACCOUNTING MANAGER</option>
+<option>FORWARDING MANAGER</option>
 <option>User</option>
 </select>
 
@@ -469,28 +477,31 @@ html += `
 <td>${user.email}</td>
 
 <td>
-
 <select onchange="changeRole('${user.id}',this.value)">
 
-<option value="Administrator"
-${user.role=="Administrator"?"selected":""}>
-Administrator
-</option>
+<option value="Administrator" ${user.role=="Administrator"?"selected":""}>Administrator</option>
 
-<option value="IT"
-${user.role=="IT"?"selected":""}>
-IT
-</option>
+<option value="IT" ${user.role=="IT"?"selected":""}>IT</option>
 
-<option value="Manager"
-${user.role=="Manager"?"selected":""}>
-Manager
-</option>
+<option value="HR" ${user.role=="HR"?"selected":""}>HR</option>
 
-<option value="User"
-${user.role=="User"?"selected":""}>
-User
-</option>
+<option value="ADMIN" ${user.role=="ADMIN"?"selected":""}>ADMIN</option>
+
+<option value="PRESIDENT" ${user.role=="PRESIDENT"?"selected":""}>PRESIDENT</option>
+
+<option value="BOD" ${user.role=="BOD"?"selected":""}>BOD</option>
+
+<option value="TRANSPORT MANAGER" ${user.role=="TRANSPORT MANAGER"?"selected":""}>TRANSPORT MANAGER</option>
+
+<option value="OPERATIONS MANAGER" ${user.role=="OPERATIONS MANAGER"?"selected":""}>OPERATIONS MANAGER</option>
+
+<option value="SALES MANAGER" ${user.role=="SALES MANAGER"?"selected":""}>SALES MANAGER</option>
+
+<option value="ACCOUNTING MANAGER" ${user.role=="ACCOUNTING MANAGER"?"selected":""}>ACCOUNTING MANAGER</option>
+
+<option value="FORWARDING MANAGER" ${user.role=="FORWARDING MANAGER"?"selected":""}>FORWARDING MANAGER</option>
+
+<option value="User" ${user.role=="User"?"selected":""}>User</option>
 
 </select>
 
