@@ -380,13 +380,8 @@ addUser();
   async function updateUser(){
 
 const response = await fetch(SCRIPT_URL,{
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
+  method:"POST",
+  body:JSON.stringify({
 
 action:"update",
 
@@ -566,15 +561,9 @@ return;
 }
 
 const response = await fetch(SCRIPT_URL,{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-action:"add",
+  method:"POST",
+  body:JSON.stringify({
+    action:"add",
 username:username,
 password:password,
 fullName:fullname,
@@ -612,9 +601,7 @@ await fetch(SCRIPT_URL,{
 
 method:"POST",
 
-headers:{
-"Content-Type":"application/json"
-},
+
 
 body:JSON.stringify({
 action:"delete",
