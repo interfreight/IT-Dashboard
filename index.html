@@ -260,7 +260,6 @@ Logout
 <div class="card">
 
 <table>
-
 <thead>
 <tr>
 <th>ID</th>
@@ -269,7 +268,8 @@ Logout
 <th>Email</th>
 <th>Role</th>
 <th>Status</th>
-<th>Action</th>
+<th>Actions</th>
+<th>Department</th>
 </tr>
 </thead>
 
@@ -291,10 +291,20 @@ Logout
 
 <input type="password" id="password" placeholder="Password">
 
-<input type="text" id="fullname" placeholder="Full Name">
+<input type="text" id="full_name" placeholder="Full Name">
 
 <input type="email" id="email" placeholder="Email">
 
+    <select id="department">
+<option>Accounting</option>
+<option>Sales</option>
+<option>Operations</option>
+<option>Transport</option>
+<option>Forwarding</option>
+<option>HR</option>
+<option>IT</option>
+</select>
+    
 <select id="role">
 <option>Administrator</option>
 <option>IT</option>
@@ -328,18 +338,28 @@ Close
 </div>
 
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 
-const SCRIPT_URL =
-"https://script.google.com/macros/s/AKfycbwrYXNIm4cLZHV92LTix5e1Pj-11rlPbqVK5ONGi2yXy0vScSAqgngq73uctEv81pMt/exec";
+const SUPABASE_URL =
+'https://tuihpvykuqbqnfyfepql.supabase.co';
 
+const SUPABASE_ANON_KEY =
+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1aWhwdnlrdXFicW5meWZlcHFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3Mjg4OTcsImV4cCI6MjA5NzMwNDg5N30.HZKS8CgFLjkZ-Bx2AIjFjurH3IsKjvf37Ft852CzJsQ';
+
+const db =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+);
+
+    
 document.getElementById("loggedUser").innerHTML =
-currentUser.fullName;
+currentUser.full_name;
 
 document.getElementById("welcomeUser").innerHTML =
 "Welcome, " +
-currentUser.fullName +
+currentUser.full_name +
 " (" +
 currentUser.role +
 ")";
@@ -355,10 +375,11 @@ window.location.href =
 function editUser(
 id,
 username,
-fullName,
+full_name,
 email,
 role,
-status
+status,
+department
 ){
 
 document.getElementById("modalTitle").innerHTML =
@@ -368,13 +389,15 @@ document.getElementById("userId").value = id;
 
 document.getElementById("username").value = username;
 
-document.getElementById("fullname").value = fullName;
+document.getElementById("full_name").value = full_name;
 
 document.getElementById("email").value = email;
 
 document.getElementById("role").value = role;
 
 document.getElementById("status").value = status;
+    document.getElementById("department").value =
+department;
 
 document.getElementById("password").value = "";
 
@@ -399,35 +422,32 @@ addUser();
 }
 async function updateUser(){
 
-const url =
-SCRIPT_URL +
-"?action=update" +
-"&id=" + encodeURIComponent(document.getElementById("userId").value) +
-"&username=" + encodeURIComponent(document.getElementById("username").value) +
-"&password=" + encodeURIComponent(document.getElementById("password").value) +
-"&fullName=" + encodeURIComponent(document.getElementById("fullname").value) +
-"&email=" + encodeURIComponent(document.getElementById("email").value) +
-"&role=" + encodeURIComponent(document.getElementById("role").value) +
-"&status=" + encodeURIComponent(document.getElementById("status").value);
+    const id =
+    document.getElementById("userId").value;
 
-const response = await fetch(url);
-const result = await response.json();
+    const { error } = await db
+    .from('users')
+    .update({
+        username: document.getElementById("username").value,
+        full_name: document.getElementById("full_name").value,
+        email: document.getElementById("email").value,
+        role: document.getElementById("role").value,
+        department: document.getElementById("department").value,
+        status: document.getElementById("status").value
+    })
+    .eq('id', id);
 
-if(result.success){
+    if(error){
+        alert(error.message);
+        return;
+    }
 
-    alert("User updated successfully");
-
+    alert("Updated");
     closeModal();
-
     loadUsers();
-
-}else{
-
-    alert("Update failed");
-
 }
 
-}
+
 function openModal(){
 
 document.getElementById("modalTitle").innerHTML =
@@ -439,14 +459,14 @@ document.getElementById("username").value = "";
 
 document.getElementById("password").value = "";
 
-document.getElementById("fullname").value = "";
+document.getElementById("full_name").value = "";
 
 document.getElementById("email").value = "";
 
 document.getElementById("role").value = "User";
 
 document.getElementById("status").value = "Active";
-
+document.getElementById("department").value = "IT";
 document.getElementById("userModal")
 .style.display="block";
 
@@ -459,64 +479,62 @@ document.getElementById("userModal").style.display="none";
 document.getElementById("userId").value="";
 document.getElementById("username").value="";
 document.getElementById("password").value="";
-document.getElementById("fullname").value="";
+document.getElementById("full_name").value="";
 document.getElementById("email").value="";
 document.getElementById("role").value="User";
 document.getElementById("status").value="Active";
+    document.getElementById("department").value = "IT";
 
 }
 async function loadUsers(){
 
-const response =
-await fetch(SCRIPT_URL);
+    const { data: users, error } =
+    await db
+    .from('users')
+    .select('*')
+    .order('id');
 
-const users =
-await response.json();
+    if(error){
+        console.error(error);
+        return;
+    }
 
-document.getElementById("totalUsers").innerHTML =
-users.length;
+    document.getElementById("totalUsers").innerHTML =
+    users.length;
+
 
 let html="";
 
-users.forEach(user=>{
+users.forEach(user => {
 
 html += `
 <tr>
 
 <td>${user.id}</td>
+
 <td>${user.username}</td>
-<td>${user.fullName}</td>
+
+<td>${user.full_name}</td>
+
 <td>${user.email}</td>
 
 <td>
 <select onchange="changeRole('${user.id}',this.value)">
 
 <option value="Administrator" ${user.role=="Administrator"?"selected":""}>Administrator</option>
-
 <option value="IT" ${user.role=="IT"?"selected":""}>IT</option>
-
 <option value="HR" ${user.role=="HR"?"selected":""}>HR</option>
-
 <option value="ADMIN" ${user.role=="ADMIN"?"selected":""}>ADMIN</option>
-
 <option value="PRESIDENT" ${user.role=="PRESIDENT"?"selected":""}>PRESIDENT</option>
-
 <option value="BOD" ${user.role=="BOD"?"selected":""}>BOD</option>
-
 <option value="TRANSPORT MANAGER" ${user.role=="TRANSPORT MANAGER"?"selected":""}>TRANSPORT MANAGER</option>
-
 <option value="OPERATIONS MANAGER" ${user.role=="OPERATIONS MANAGER"?"selected":""}>OPERATIONS MANAGER</option>
-
 <option value="SALES MANAGER" ${user.role=="SALES MANAGER"?"selected":""}>SALES MANAGER</option>
-
 <option value="ACCOUNTING MANAGER" ${user.role=="ACCOUNTING MANAGER"?"selected":""}>ACCOUNTING MANAGER</option>
-
 <option value="FORWARDING MANAGER" ${user.role=="FORWARDING MANAGER"?"selected":""}>FORWARDING MANAGER</option>
-
 <option value="User" ${user.role=="User"?"selected":""}>User</option>
 
 </select>
-
 </td>
 
 <td>${user.status}</td>
@@ -528,10 +546,11 @@ class="edit-btn"
 onclick="editUser(
 '${user.id}',
 '${user.username}',
-'${user.fullName}',
+'${user.full_name}',
 '${user.email}',
 '${user.role}',
-'${user.status}'
+'${user.status}',
+'${user.department}'
 )">
 Edit
 </button>
@@ -543,6 +562,9 @@ Delete
 </button>
 
 </td>
+
+<td>${user.department}</td>
+
 </tr>
 `;
 
@@ -555,65 +577,64 @@ html;
 
 async function addUser(){
 
-const url =
-SCRIPT_URL +
-"?action=add" +
-"&username=" + encodeURIComponent(document.getElementById("username").value) +
-"&password=" + encodeURIComponent(document.getElementById("password").value) +
-"&fullName=" + encodeURIComponent(document.getElementById("fullname").value) +
-"&email=" + encodeURIComponent(document.getElementById("email").value) +
-"&role=" + encodeURIComponent(document.getElementById("role").value) +
-"&status=" + encodeURIComponent(document.getElementById("status").value);
+    const { error } = await db
+    .from('users')
+    .insert([{
+        username: document.getElementById("username").value,
+        password_hash: document.getElementById("password").value,
+        full_name: document.getElementById("full_name").value,
+        email: document.getElementById("email").value,
+        role: document.getElementById("role").value,
+        department: document.getElementById("department").value,
+        status: document.getElementById("status").value
+    }]);
 
-const response = await fetch(url);
-const result = await response.json();
+    if(error){
+        alert(error.message);
+        return;
+    }
 
-if(result.success){
-
-    alert("User saved successfully");
-
+    alert("User added");
     closeModal();
+    loadUsers();
+}
+
+async function changeRole(id, role){
+
+    const { error } = await db
+    .from('users')
+    .update({
+        role: role
+    })
+    .eq('id', id);
+
+    if(error){
+        alert(error.message);
+        return;
+    }
 
     loadUsers();
-
-}else{
-
-    alert("Failed to save user");
-
 }
-
-}
-
 async function deleteUser(id){
 
-if(!confirm("Delete this user?")) return;
+    if(!confirm("Delete user?")) return;
 
-const response = await fetch(
-SCRIPT_URL +
-"?action=delete&id=" +
-encodeURIComponent(id)
-);
+    const { error } =
+    await db
+    .from('users')
+    .delete()
+    .eq('id', id);
 
-const result = await response.json();
+    if(error){
+        alert(error.message);
+        return;
+    }
 
-if(result.success){
     loadUsers();
 }
-}
-
-async function changeRole(id,role){
-
-await fetch(
-SCRIPT_URL +
-"?action=changeRole" +
-"&id=" + encodeURIComponent(id) +
-"&role=" + encodeURIComponent(role)
-);
-
-}
-
-
-loadUsers();
+    window.onload = function(){
+    loadUsers();
+};
 </script>
 
 </body>
