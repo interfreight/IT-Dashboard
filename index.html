@@ -184,24 +184,20 @@ cursor:pointer;
 
 <script>
 
-const LOGIN_URL =
-"https://interfreight.github.io/login/";
+const LOGIN_URL = "https://interfreight.github.io/login/";
 
-const currentUser =
-JSON.parse(localStorage.getItem("currentUser"));
+const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
-if(!currentUser){
-
+if (!currentUser) {
 window.location.href = LOGIN_URL;
-
 }
 
-if(currentUser.role !== "IT"){
+// ONLY allow IT department
+const dept = (currentUser.department || "").trim().toUpperCase();
 
+if (dept !== "IT") {
 localStorage.removeItem("currentUser");
-
 window.location.href = LOGIN_URL;
-
 }
 
 </script>
