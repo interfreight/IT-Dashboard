@@ -189,28 +189,12 @@ content="0">
 
 <body>
 <script>
-const currentUser =
-JSON.parse(localStorage.getItem("currentUser"));
-
-if(!currentUser){
-
-    window.location.replace(
-    "https://interfreight.github.io/login/"
-    );
-
-}
-</script>
 <script>
-
-const LOGIN_URL = "https://interfreight.github.io/login/";
-
 const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
 if (!currentUser) {
-window.location.href = LOGIN_URL;
+    window.location.replace("https://interfreight.github.io/login/");
 }
-
-
 </script>
 
 <div class="sidebar">
@@ -373,11 +357,13 @@ currentUser.role +
 
 function logout(){
 
-localStorage.clear();
+    localStorage.clear();
 
-window.location.replace(
-"https://interfreight.github.io/login/"
-);
+    sessionStorage.clear();
+
+    window.location.replace(
+        "https://interfreight.github.io/login/"
+    );
 
 }
 function editUser(
@@ -650,6 +636,26 @@ history.pushState(null,null,location.href);
 window.onpopstate=function(){
 history.go(1);
 };
+</script>
+    <script>
+window.addEventListener("pageshow", function(event){
+
+    if(
+        event.persisted ||
+        performance.getEntriesByType("navigation")[0]?.type === "back_forward"
+    ){
+
+        if(!localStorage.getItem("currentUser")){
+
+            window.location.replace(
+                "https://interfreight.github.io/login/"
+            );
+
+        }
+
+    }
+
+});
 </script>
 </body>
 </html>
