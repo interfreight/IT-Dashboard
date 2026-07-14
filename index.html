@@ -181,7 +181,18 @@ cursor:pointer;
 </head>
 
 <body>
+<script>
+const currentUser =
+JSON.parse(localStorage.getItem("currentUser"));
 
+if(!currentUser){
+
+    window.location.replace(
+    "https://interfreight.github.io/login/"
+    );
+
+}
+</script>
 <script>
 
 const LOGIN_URL = "https://interfreight.github.io/login/";
