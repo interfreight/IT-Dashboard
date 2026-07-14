@@ -1,6 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <head>
+
+<meta charset="UTF-8">
+<meta name="viewport"...>
+
+<meta http-equiv="Cache-Control"
+content="no-cache, no-store, must-revalidate">
+
+<meta http-equiv="Pragma"
+content="no-cache">
+
+<meta http-equiv="Expires"
+content="0">
+
+<style>
+
+...
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Interfreight IT Dashboard</title>
@@ -176,25 +193,38 @@ padding:10px;
 width:100%;
 cursor:pointer;
 }
-<meta http-equiv="Cache-Control"
-content="no-cache, no-store, must-revalidate">
-
-<meta http-equiv="Pragma"
-content="no-cache">
-
-<meta http-equiv="Expires"
-content="0">
 </style>
 </head>
 
 <body>
-<script>
-<script>
-const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
-if (!currentUser) {
-    window.location.replace("https://interfreight.github.io/login/");
+<script>
+
+const LOGIN_URL =
+"https://interfreight.github.io/login/";
+
+const currentUser =
+JSON.parse(localStorage.getItem("currentUser"));
+
+if(!currentUser){
+
+    window.location.replace(LOGIN_URL);
+
 }
+
+const dept =
+(currentUser.department || "")
+.trim()
+.toUpperCase();
+
+if(dept !== "IT"){
+
+    localStorage.clear();
+
+    window.location.replace(LOGIN_URL);
+
+}
+
 </script>
 
 <div class="sidebar">
@@ -628,13 +658,6 @@ async function deleteUser(id){
 }
     window.onload = function(){
     loadUsers();
-};
-</script>
-<script>
-history.pushState(null,null,location.href);
-
-window.onpopstate=function(){
-history.go(1);
 };
 </script>
     <script>
