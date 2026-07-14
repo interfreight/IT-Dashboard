@@ -176,7 +176,14 @@ padding:10px;
 width:100%;
 cursor:pointer;
 }
+<meta http-equiv="Cache-Control"
+content="no-cache, no-store, must-revalidate">
 
+<meta http-equiv="Pragma"
+content="no-cache">
+
+<meta http-equiv="Expires"
+content="0">
 </style>
 </head>
 
@@ -203,13 +210,6 @@ if (!currentUser) {
 window.location.href = LOGIN_URL;
 }
 
-// ONLY allow IT department
-const dept = (currentUser.department || "").trim().toUpperCase();
-
-if (dept !== "IT") {
-localStorage.removeItem("currentUser");
-window.location.href = LOGIN_URL;
-}
 
 </script>
 
@@ -373,10 +373,11 @@ currentUser.role +
 
 function logout(){
 
-localStorage.removeItem("currentUser");
+localStorage.clear();
 
-window.location.href =
-"https://interfreight.github.io/login/";
+window.location.replace(
+"https://interfreight.github.io/login/"
+);
 
 }
 function editUser(
@@ -643,6 +644,12 @@ async function deleteUser(id){
     loadUsers();
 };
 </script>
+<script>
+history.pushState(null,null,location.href);
 
+window.onpopstate=function(){
+history.go(1);
+};
+</script>
 </body>
 </html>
